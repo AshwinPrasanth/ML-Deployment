@@ -1,0 +1,173 @@
+[
+  {
+    "doc_id": "irish_life_health_first_cover_table_of_cover_2026-01-01",
+    "insurer": "Irish Life Health",
+    "plan_name": "First Cover",
+    "doc_type": "table_of_cover",
+    "version_date": "2026-01-01",
+    "source_url": "https://www.irishlifehealth.ie/mediafiles/pdfs/tables-of-cover/First-Cover-TOC.pdf",
+    "file_path": "data/pdfs/irish_life_health_first_cover_table_of_cover_2026-01-01.pdf"
+  },
+  {
+    "doc_id": "irish_life_health_benefit_table_of_cover_2026-01-01",
+    "insurer": "Irish Life Health",
+    "plan_name": "BeneFit",
+    "doc_type": "table_of_cover",
+    "version_date": "2026-01-01",
+    "source_url": "https://www.irishlifehealth.ie/mediafiles/pdfs/tables-of-cover/BeneFit-TOC.pdf",
+    "file_path": "data/pdfs/irish_life_health_benefit_table_of_cover_2026-01-01.pdf"
+  },
+  {
+    "doc_id": "irish_life_health_horizon_4_table_of_cover_2026-01-01",
+    "insurer": "Irish Life Health",
+    "plan_name": "Horizon 4",
+    "doc_type": "table_of_cover",
+    "version_date": "2026-01-01",
+    "source_url": "https://www.irishlifehealth.ie/mediafiles/pdfs/tables-of-cover/Horizon_4_TOC.pdf",
+    "file_path": "data/pdfs/irish_life_health_horizon_4_table_of_cover_2026-01-01.pdf"
+  },
+  {
+    "doc_id": "irish_life_health_health_plan_26.1_table_of_cover_2026-01-01",
+    "insurer": "Irish Life Health",
+    "plan_name": "Health Plan 26.1",
+    "doc_type": "table_of_cover",
+    "version_date": "2026-01-01",
+    "source_url": "https://www.irishlifehealth.ie/mediafiles/pdfs/tables-of-cover/Health_Plan_26_1_TOC.pdf",
+    "file_path": "data/pdfs/irish_life_health_health_plan_26.1_table_of_cover_2026-01-01.pdf"
+  },
+  {
+    "doc_id": "irish_life_health_select_starter_table_of_cover_2026-01-01",
+    "insurer": "Irish Life Health",
+    "plan_name": "Select Starter",
+    "doc_type": "table_of_cover",
+    "version_date": "2026-01-01",
+    "source_url": "https://www.irishlifehealth.ie/mediafiles/pdfs/tables-of-cover/Select-Starter-TOC.pdf",
+    "file_path": "data/pdfs/irish_life_health_select_starter_table_of_cover_2026-01-01.pdf"
+  },
+  {
+    "doc_id": "irish_life_health_health_plans_membership_handbook_terms_conditions_2026-01-01",
+    "insurer": "Irish Life Health",
+    "plan_name": "Health Plans Membership Handbook",
+    "doc_type": "terms_conditions",
+    "version_date": "2026-01-01",
+    "source_url": "https://www.irishlifehealth.ie/IrishLifeHealth/media/docs/ILH-Health-Plans-Handbook-Jan-2026.pdf",
+    "file_path": "data/pdfs/irish_life_health_health_plans_membership_handbook_terms_conditions_2026-01-01.pdf"
+  },
+  {
+    "doc_id": "irish_life_health_tailored_health_plans_membership_handbook_terms_conditions_2026-01-01",
+    "insurer": "Irish Life Health",
+    "plan_name": "Tailored Health Plans Membership Handbook",
+    "doc_type": "terms_conditions",
+    "version_date": "2026-01-01",
+    "source_url": "https://www.irishlifehealth.ie/IrishLifeHealth/media/docs/ILH-Tailored-Health-Plans-Handbook-Jan-2026.pdf",
+    "file_path": "data/pdfs/irish_life_health_tailored_health_plans_membership_handbook_terms_conditions_2026-01-01.pdf"
+  },
+  {
+    "doc_id": "vhi_company_plan_plus_level_1_table_of_cover_2024-10-01",
+    "insurer": "Vhi",
+    "plan_name": "Company Plan Plus Level 1",
+    "doc_type": "table_of_cover",
+    "version_date": "2024-10-01",
+    "source_url": "https://www.vhi.ie/pdf/myvhi/TOBCPPL1%20V65%20Oct24.pdf",
+    "file_path": "data/pdfs/vhi_company_plan_plus_level_1_table_of_cover_2024-10-01.pdf"
+  },
+  {
+    "doc_id": "vhi_health_access_table_of_cover_2023-12-31",
+    "insurer": "Vhi",
+    "plan_name": "Health Access",
+    "doc_type": "table_of_cover",
+    "version_date": "2023-12-31",
+    "source_url": "https://www.vhi.ie/pdf/myvhi/TOBHEALTHA%20V4402%20Dec23.pdf",
+    "file_path": "data/pdfs/vhi_health_access_table_of_cover_2023-12-31.pdf"
+  },
+  {
+    "doc_id": "vhi_hospital_plans_rules_terms_conditions__terms_conditions_2025-10-01",
+    "insurer": "Vhi",
+    "plan_name": "Hospital Plans Rules (Terms & Conditions)",
+    "doc_type": "terms_conditions",
+    "version_date": "2025-10-01",
+    "source_url": "https://www.vhi.ie/pdf/products/Hospital%20Plans%20Rules_01Oct25_VHIMR2.pdf",
+    "file_path": "data/pdfs/vhi_hospital_plans_rules_terms_conditions__terms_conditions_2025-10-01.pdf"
+  },
+  {
+    "doc_id": "laya_healthcare_inspire_table_of_benefits__table_of_cover_2025-08-01",
+    "insurer": "Laya Healthcare",
+    "plan_name": "Inspire (Table of Benefits)",
+    "doc_type": "table_of_cover",
+    "version_date": "2025-08-01",
+    "source_url": "https://www.hia.ie/sites/default/files/Inspire.pdf",
+    "file_path": "data/pdfs/laya_healthcare_inspire_table_of_benefits__table_of_cover_2025-08-01.pdf"
+  },
+  {
+    "doc_id": "laya_healthcare_prime_plan_table_of_benefits_table_of_cover_2019-08-01",
+    "insurer": "Laya Healthcare",
+    "plan_name": "Prime Plan Table of Benefits",
+    "doc_type": "table_of_cover",
+    "version_date": "2019-08-01",
+    "source_url": "https://www.hia.ie/sites/default/files/Table%20of%20Benefits%20Prime%2001.08.2019.pdf",
+    "file_path": "data/pdfs/laya_healthcare_prime_plan_table_of_benefits_table_of_cover_2019-08-01.pdf"
+  },
+  {
+    "doc_id": "laya_healthcare_first_family_plan_table_of_benefits_table_of_cover_2021-02-01",
+    "insurer": "Laya Healthcare",
+    "plan_name": "First & Family Plan – Table of Benefits",
+    "doc_type": "table_of_cover",
+    "version_date": "2021-02-01",
+    "source_url": "https://www.hia.ie/sites/default/files/First%20%26%20Family%20Plan.pdf",
+    "file_path": "data/pdfs/laya_healthcare_first_family_plan_table_of_benefits_table_of_cover_2021-02-01.pdf"
+  },
+  {
+    "doc_id": "laya_healthcare_pmi_plan_b_table_of_benefits_table_of_cover_2021-10-01",
+    "insurer": "Laya Healthcare",
+    "plan_name": "PMI Plan B – Table of Benefits",
+    "doc_type": "table_of_cover",
+    "version_date": "2021-10-01",
+    "source_url": "https://www.hia.ie/sites/default/files/PMI%2001%2010.pdf",
+    "file_path": "data/pdfs/laya_healthcare_pmi_plan_b_table_of_benefits_table_of_cover_2021-10-01.pdf"
+  },
+  {
+    "doc_id": "level_health_plan_a_table_of_cover__table_of_cover_2025-06-27",
+    "insurer": "Level Health",
+    "plan_name": "Plan A (Table of Cover)",
+    "doc_type": "table_of_cover",
+    "version_date": "2025-06-27",
+    "source_url": "https://levelhealth.ie/api/download?path=o%2Fassets%252Fbf5aeb09845647e5a8182770c0ca0fdc%252F9b1981371b404059b483765a6329a4f9%3Falt%3Dmedia%26token%3Dddfe44f4-eeed-46db-9b9d-3b783ba1bfee",
+    "file_path": "data/pdfs/level_health_plan_a_table_of_cover__table_of_cover_2025-06-27.pdf"
+  },
+  {
+    "doc_id": "level_health_plan_b_with_150_excess_table_of_cover__table_of_cover_2025-06-27",
+    "insurer": "Level Health",
+    "plan_name": "Plan B (with €150 Excess) (Table of Cover)",
+    "doc_type": "table_of_cover",
+    "version_date": "2025-06-27",
+    "source_url": "https://levelhealth.ie/api/download?path=o%2Fassets%252Fbf5aeb09845647e5a8182770c0ca0fdc%252Fd9fe12370802462a8913837d173d2821%3Falt%3Dmedia%26token%3D0958c8b2-3f54-4d83-9a1b-625d7b8979a7",
+    "file_path": "data/pdfs/level_health_plan_b_with_150_excess_table_of_cover__table_of_cover_2025-06-27.pdf"
+  },
+  {
+    "doc_id": "level_health_plan_b_with_300_excess_table_of_cover__table_of_cover_2025-06-27",
+    "insurer": "Level Health",
+    "plan_name": "Plan B (with €300 Excess) (Table of Cover)",
+    "doc_type": "table_of_cover",
+    "version_date": "2025-06-27",
+    "source_url": "https://levelhealth.ie/api/download?path=o%2Fassets%252Fbf5aeb09845647e5a8182770c0ca0fdc%252F466dbce0188f47308dc32f12d9db6710%3Falt%3Dmedia%26token%3D3c4e0d86-77ef-4275-b244-88bdb7d850fa",
+    "file_path": "data/pdfs/level_health_plan_b_with_300_excess_table_of_cover__table_of_cover_2025-06-27.pdf"
+  },
+  {
+    "doc_id": "level_health_plan_c_table_of_cover__table_of_cover_2025-06-27",
+    "insurer": "Level Health",
+    "plan_name": "Plan C (Table of Cover)",
+    "doc_type": "table_of_cover",
+    "version_date": "2025-06-27",
+    "source_url": "https://levelhealth.ie/api/download?path=o%2Fassets%252Fbf5aeb09845647e5a8182770c0ca0fdc%252Ffc78d45331d14d3bb3203be51029e608%3Falt%3Dmedia%26token%3D0fcbd2b3-db9f-4bea-80a1-4b60069b7937",
+    "file_path": "data/pdfs/level_health_plan_c_table_of_cover__table_of_cover_2025-06-27.pdf"
+  },
+  {
+    "doc_id": "level_health_plan_d_table_of_cover__table_of_cover_2025-06-27",
+    "insurer": "Level Health",
+    "plan_name": "Plan D (Table of Cover)",
+    "doc_type": "table_of_cover",
+    "version_date": "2025-06-27",
+    "source_url": "https://levelhealth.ie/api/download?path=o%2Fassets%252Fbf5aeb09845647e5a8182770c0ca0fdc%252Fa738c8a3851b4113889f5e0cb00f28fc%3Falt%3Dmedia%26token%3Db7207980-b88c-4259-984b-e3eaab5bcf5a",
+    "file_path": "data/pdfs/level_health_plan_d_table_of_cover__table_of_cover_2025-06-27.pdf"
+  }
+]
