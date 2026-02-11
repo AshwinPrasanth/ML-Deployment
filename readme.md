@@ -203,3 +203,5 @@ It is:
 - A structured hybrid retrieval + medical reasoning engine
 - A multi-disease decision-aware ranking framework
 
+
+# Version 2- the improved model is under building
