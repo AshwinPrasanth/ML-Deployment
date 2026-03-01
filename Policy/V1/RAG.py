@@ -50,3 +50,14 @@ def search(query, k=3):
         results.append(metadata[idx])
 
     return results
+query = """
+Coverage for cardiac treatment, frequent hospital visits,
+consultant fees, medication support,
+and minimal excess for inpatient admission.
+"""
+
+results = search(query)
+for r in results:
+    print(r["plan_name"])
+    print(r["text"][:500])
+    print("="*80)
