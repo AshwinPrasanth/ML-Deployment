@@ -1,3 +1,7 @@
+# Please run Cell 1 (line 3-265), Cell 2 (from line 266)
+
+# Cell 1
+
 import json
 import faiss
 import numpy as np
@@ -256,4 +260,140 @@ if __name__ == "__main__":
         print(f"Scores -> Final: {r['final_score']} | Hybrid RRF: {r['hybrid_rrf_score']} | Quantitative: {r['structured_score']}")
         print(f"\nEvidence Preview:\n{r['evidence']}\n")
         print("-" * 60)
-     
+
+
+
+# Cell 2
+
+
+import torch
+from transformers import AutoModelForCausalLM, AutoTokenizer
+
+# ==========================================
+# 10. LLM CONFIGURATION (Qwen-2.5-3B)
+# ==========================================
+LLM_MODEL_NAME = "Qwen/Qwen2.5-3B-Instruct"
+
+print("\nLoading Expert Broker LLM...")
+tokenizer = AutoTokenizer.from_pretrained(LLM_MODEL_NAME)
+if tokenizer.pad_token is None:
+    tokenizer.pad_token = tokenizer.eos_token
+
+llm_model = AutoModelForCausalLM.from_pretrained(
+    LLM_MODEL_NAME,
+    torch_dtype=torch.float16,
+    device_map="auto"
+)
+llm_model.eval()
+
+# ==========================================
+# 11. FULL DOCUMENT RETRIEVAL HELPER
+# ==========================================
+def get_full_document_text(plan_name):
+    """
+    Simulates 'reading the entire PDF' by finding every chunk
+    in the JSONL file that belongs to this specific plan.
+    """
+    full_text_list = []
+    # We look up the doc_id from the global chunk_metadata we loaded earlier
+    # to find all chunks sharing that ID.
+    target_doc_id = next((m['doc_id'] for m in chunk_metadata if m['plan_name'] == plan_name), None)
+
+    if not target_doc_id:
+        return "Plan details not found in source documentation."
+
+    for meta in chunk_metadata:
+        if meta['doc_id'] == target_doc_id:
+            full_text_list.append(meta['chunk_text'])
+
+    return "\n\n".join(full_text_list)
+
+# ==========================================
+# 12. EXPERT RECOMMENDATION GENERATOR
+# ==========================================
+def generate_recommendation(user_query, user_profile, search_results):
+    if not search_results:
+        return "I'm sorry, I couldn't find a plan that meets your specific requirements."
+
+    # 1. Take the top-ranked plan
+    top_plan = search_results[0]
+
+    # 2. Retrieve the 'Entire PDF' text
+    print(f"📖 Reading the entire documentation for: {top_plan['plan_name']}...")
+    entire_policy_text = get_full_document_text(top_plan['plan_name'])
+
+    # 3. Build the prompt
+    messages = [
+        {"role": "system", "content": "You are an expert, empathetic Irish Health Insurance broker. You provide recommendations based on strict actuarial evidence and full policy documentation."},
+        {"role": "user", "content": f"""
+USER QUESTION: "{user_query}"
+
+PATIENT PROFILE:
+- Conditions: {', '.join(user_profile.get('chronic_conditions', []))}
+- Expected Annual Inpatient Visits: {user_profile.get('inpatient_visits_yr', 0)}
+- Financial Tolerance: {user_profile.get('financial_tolerance', 'medium')}
+
+TOP SEARCH RESULT:
+- Plan: {top_plan['plan_name']} ({top_plan['provider']})
+- Search Relevance Score: {top_plan['final_score']}
+- Key Snippets found: {top_plan['evidence']}
+
+FULL POLICY DOCUMENTATION (Extracted from PDF):
+{entire_policy_text[:15000]} # Using first 15k chars to stay within context limits
+
+TASK:
+Write a professional recommendation for the user.
+1. Acknowledge their condition and medical needs.
+2. Explain specifically how the benefits found in the 'FULL POLICY DOCUMENTATION' cover their needs.
+3. Explicitly mention the specific hospitals or cardiac programs if mentioned in the text.
+4. Conclude why this is the safest medical and financial choice for them.
+"""}
+    ]
+
+    # 4. Generate with Qwen
+    text = tokenizer.apply_chat_template(messages, tokenize=False, add_generation_prompt=True)
+    model_inputs = tokenizer([text], return_tensors="pt").to(llm_model.device)
+
+    generated_ids = llm_model.generate(
+        **model_inputs,
+        max_new_tokens=1000,
+        temperature=0.3,
+        do_sample=True
+    )
+
+    # Clean output
+    generated_ids = [output_ids[len(input_ids):] for input_ids, output_ids in zip(model_inputs.input_ids, generated_ids)]
+    response = tokenizer.batch_decode(generated_ids, skip_special_tokens=True)[0]
+
+    return response
+
+# ==========================================
+# 13. UPDATED EXECUTION BLOCK
+# ==========================================
+if __name__ == "__main__":
+    test_query = "What is the best plan for cardiac treatment?"
+
+    # Define the profile for the LLM to reason about
+    current_user = {
+        "chronic_conditions": ["cardiac"],
+        "inpatient_visits_yr": 2,
+        "financial_tolerance": "medium"
+    }
+
+    print(f"\nSearching for: '{test_query}'\n")
+
+    # 1. Run your existing Hybrid Search
+    top_plans = hybrid_search(test_query)
+
+    # 2. Feed results into the LLM Expert Generator
+    if top_plans:
+        expert_report = generate_recommendation(test_query, current_user, top_plans)
+
+        print("\n" + "="*60)
+        print("🤖 EXPERT BROKER FINAL REPORT")
+        print("="*60)
+        print(expert_report)
+        print("="*60)
+        print(f"Source Document: {top_plans[0]['source_url']}")
+    else:
+        print("No results found.")
