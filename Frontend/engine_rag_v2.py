@@ -1,6 +1,7 @@
 import json
 import os
 import re
+import uuid
 from dataclasses import dataclass
 from typing import Any, Dict, List, Tuple
 from collections import defaultdict
@@ -9,7 +10,12 @@ import numpy as np
 import faiss
 from sentence_transformers import SentenceTransformer
 
+from pdf_highlighter import highlight_chunks
+
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+
+HIGHLIGHT_DIR = os.path.join(BASE_DIR, "highlighted_pdfs")
+os.makedirs(HIGHLIGHT_DIR, exist_ok=True)
 
 # =========================================================
 # DISEASE RULES
@@ -97,6 +103,29 @@ def _infer_company_from_name(display_name: str) -> str:
     if "level" in dn or "plan a" in dn or "plan b" in dn or "plan c" in dn or "plan d" in dn:
         return "Level Health"
     return ""
+
+
+def _resolve_pdf_path(raw_path: str, registry_path: str) -> str | None:
+    if not raw_path:
+        return None
+
+    if os.path.isabs(raw_path) and os.path.exists(raw_path):
+        return raw_path
+
+    candidates = [
+        raw_path,
+        os.path.join(BASE_DIR, raw_path),
+        os.path.join(os.path.dirname(registry_path), raw_path),
+        os.path.join(os.path.dirname(os.path.dirname(registry_path)), raw_path),
+        os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(registry_path))), raw_path),
+    ]
+
+    for c in candidates:
+        c = os.path.normpath(c)
+        if os.path.exists(c):
+            return c
+
+    return None
 
 
 # =========================================================
@@ -373,24 +402,34 @@ class RAGEngine:
         k = min(self.cfg.dense_top_k, self.index.ntotal)
         scores, indices = self.index.search(q_emb, k)
 
-        per_plan: Dict[str, List[Tuple[float, str]]] = defaultdict(list)
+        per_plan: Dict[str, List[Dict[str, Any]]] = defaultdict(list)
 
         for s, idx in zip(scores[0], indices[0]):
             if idx < 0 or idx >= len(self.metadata):
                 continue
+
             m = self.metadata[idx]
             doc_id = m.get("doc_id")
             if not doc_id:
                 continue
+
             txt = (m.get("chunk_text") or m.get("text") or "")
-            if txt:
-                per_plan[doc_id].append((float(s), txt))
+            if not txt:
+                continue
+
+            per_plan[doc_id].append(
+                {
+                    "chunk_score": float(s),
+                    "text": txt,
+                    "page_start": m.get("page_start"),
+                    "page_end": m.get("page_end"),
+                }
+            )
 
         evidence: Dict[str, List[Dict[str, Any]]] = {}
-        for doc_id, pairs in per_plan.items():
-            pairs.sort(key=lambda x: x[0], reverse=True)
-            ev = [{"chunk_score": sc, "text": tx} for sc, tx in pairs[: self.cfg.evidence_per_plan]]
-            evidence[doc_id] = ev
+        for doc_id, items in per_plan.items():
+            items.sort(key=lambda x: x["chunk_score"], reverse=True)
+            evidence[doc_id] = items[: self.cfg.evidence_per_plan]
 
         return evidence
 
@@ -595,6 +634,27 @@ class RAGEngine:
             if not company:
                 company = _infer_company_from_name(display_name)
 
+            highlighted_pdf = None
+            pdf_path = None
+            if isinstance(reg, dict):
+                pdf_path = reg.get("file_path")
+
+            resolved_pdf_path = _resolve_pdf_path(pdf_path, self.cfg.registry_path) if pdf_path else None
+
+            if resolved_pdf_path and ev:
+                output_pdf = os.path.join(
+                    HIGHLIGHT_DIR,
+                    f"{doc_id}_highlighted_{uuid.uuid4().hex}.pdf"
+                )
+                try:
+                    highlighted_pdf = highlight_chunks(
+                        pdf_path=resolved_pdf_path,
+                        evidence=ev[: self.cfg.evidence_per_plan],
+                        output_path=output_pdf,
+                    )
+                except Exception:
+                    highlighted_pdf = None
+
             scored.append(
                 {
                     "doc_id": doc_id,
@@ -613,6 +673,7 @@ class RAGEngine:
                     "reasons": reasons,
                     "clinical_summary": clinical,
                     "evidence": ev[: self.cfg.evidence_per_plan],
+                    "highlighted_pdf": highlighted_pdf,
                 }
             )
 
