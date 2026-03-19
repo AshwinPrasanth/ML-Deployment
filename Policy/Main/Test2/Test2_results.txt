@@ -1,0 +1,108 @@
+Loading embedding model...
+Loading weights: 100%
+ 391/391 [00:01<00:00, 224.84it/s, Materializing param=pooler.dense.weight]
+Loaded 19 plan URLs.
+Loading RAG chunks...
+Loaded 950 chunks across 19 plans.
+Loaded structured data for 19 plans.
+Building FAISS index...
+Batches: 100%
+ 30/30 [00:11<00:00,  4.18it/s]
+Building BM25 index...
+Superset bridge built: 19/19 plans matched.
+Indices ready.
+
+
+=================================================================
+Query: I'm 68 with Parkinson's. I see a neurologist monthly and take daily medication.
+Profile: age=68 | conditions=['neurological'] | freq=daily | visits=None | admissions=None
+Retrieved 10 candidates via RRF.
+Rule engine passed 10 plans to LLM.
+  Sending 7 plans to llama-3.3-70b-versatile (max_tokens=4000)...
+
+Top 5 results:
+
+  Rank 1: Plan D (Table of Cover) (Level Health)
+  Fit: 8/10 | Rule score: 1.0
+  This plan suits the user due to its low excess and high day limits, which are beneficial for someone with a neurological condition like Parkinson's who requires frequent medical visits and daily medication. However, the plan's policy text does not explicitly mention neurological conditions, which is a concern.
+  + Low excess of €38 | High day limits of 100 days
+  - No explicit mention of neurological conditions in the policy text | High copayment of €1000
+  ! Gaps: Neurological conditions
+  https://levelhealth.ie/api/download?path=o%2Fassets%252Fbf5aeb09845647e5a8182770c0ca0fdc%252Fa738c8a3851b4113889f5e0cb00f28fc%3Falt%3Dmedia%26token%3Db7207980-b88c-4259-984b-e3eaab5bcf5a
+
+  Rank 2: PMI Plan B – Table of Benefits (Laya Healthcare)
+  Fit: 7/10 | Rule score: 0.9555
+  This plan has a relatively low excess and high day limits, making it suitable for the user's needs. However, the plan's policy text does not explicitly mention neurological conditions, and the copayment is not clearly stated.
+  + Relatively low excess of €56 | High day limits of 104 days
+  - No explicit mention of neurological conditions in the policy text | Unclear copayment structure
+  ! Gaps: Neurological conditions
+  https://www.hia.ie/sites/default/files/PMI%2001%2010.pdf
+
+  Rank 3: Health Plans Membership Handbook (Irish Life Health)
+  Fit: 6/10 | Rule score: 0.8202
+  This plan has a moderate excess and day limits, but its policy text does not explicitly mention neurological conditions. The plan's coverage of healthcare providers is comprehensive, but the user may need to pay more out-of-pocket due to the higher excess.
+  + Moderate excess of €72 | Comprehensive coverage of healthcare providers
+  - No explicit mention of neurological conditions in the policy text | Higher excess compared to other plans
+  ! Gaps: Neurological conditions
+  https://www.irishlifehealth.ie/IrishLifeHealth/media/docs/ILH-Health-Plans-Handbook-Jan-2026.pdf
+
+  Rank 4: Inspire (Table of Benefits) (Laya Healthcare)
+  Fit: 5/10 | Rule score: 0.7422
+  This plan has a high excess and moderate day limits, making it less suitable for the user's needs. However, the plan's policy text mentions coverage of physiotherapy and other complementary therapies, which may be beneficial for someone with Parkinson's.
+  + Coverage of physiotherapy and other complementary therapies
+  - High excess of €341 | No explicit mention of neurological conditions in the policy text
+  ! Gaps: Neurological conditions
+  https://www.hia.ie/sites/default/files/Inspire.pdf
+
+  Rank 5: Hospital Plans Rules (Terms & Conditions) (Vhi)
+  Fit: 4/10 | Rule score: 0.5429
+  This plan has a very high excess and low day limits, making it less suitable for the user's needs. The plan's policy text does not explicitly mention neurological conditions, and the coverage of healthcare providers is not clearly stated.
+  + Coverage of hospital costs
+  - Very high excess of €1000 | Low day limits of 98 days
+  ! Gaps: Neurological conditions
+  https://www.vhi.ie/pdf/products/Hospital%20Plans%20Rules_01Oct25_VHIMR2.pdf
+
+
+=================================================================
+Query: I'm pregnant. Looking for the best maternity cover with postnatal support.
+Profile: age=None | conditions=['maternity'] | freq=None | visits=None | admissions=None
+Retrieved 10 candidates via RRF.
+Rule engine passed 10 plans to LLM.
+  Sending 7 plans to llama-3.3-70b-versatile (max_tokens=4000)...
+
+Top 5 results:
+
+  Rank 1: Plan C (Table of Cover) (Level Health)
+  Fit: 9/10 | Rule score: 0.5
+  This plan offers comprehensive maternity benefits, including full cover for in-patient hospital delivery and consultant fees, as well as post-natal home support. The low excess and high day limits make it an attractive option for expectant mothers.
+  + Full cover for in-patient hospital delivery | Full cover for participating consultants
+  - Copayment of €75
+  https://levelhealth.ie/api/download?path=o%2Fassets%252Fbf5aeb09845647e5a8182770c0ca0fdc%252Ffc78d45331d14d3bb3203be51029e608%3Falt%3Dmedia%26token%3D0fcbd2b3-db9f-4bea-80a1-4b60069b7937
+
+  Rank 2: Plan D (Table of Cover) (Level Health)
+  Fit: 8/10 | Rule score: 0.5
+  This plan offers similar maternity benefits to Plan C, including full cover for in-patient hospital delivery and consultant fees, as well as post-natal home support. However, the copayment is higher at €1000.
+  + Full cover for in-patient hospital delivery | Full cover for participating consultants
+  - High copayment of €1000
+  https://levelhealth.ie/api/download?path=o%2Fassets%252Fbf5aeb09845647e5a8182770c0ca0fdc%252Fa738c8a3851b4113889f5e0cb00f28fc%3Falt%3Dmedia%26token%3Db7207980-b88c-4259-984b-e3eaab5bcf5a
+
+  Rank 3: Plan B (with €300 Excess) (Table of Cover) (Level Health)
+  Fit: 7/10 | Rule score: 0.5
+  This plan offers comprehensive maternity benefits, but the high excess of €300 may be a deterrent for some expectant mothers.
+  + Full cover for in-patient hospital delivery | Full cover for participating consultants
+  - High excess of €300
+  https://levelhealth.ie/api/download?path=o%2Fassets%252Fbf5aeb09845647e5a8182770c0ca0fdc%252F466dbce0188f47308dc32f12d9db6710%3Falt%3Dmedia%26token%3D3c4e0d86-77ef-4275-b244-88bdb7d850fa
+
+  Rank 4: Plan B (with €150 Excess) (Table of Cover) (Level Health)
+  Fit: 7/10 | Rule score: 0.5
+  This plan offers similar maternity benefits to Plan B with €300 Excess, but with a lower excess of €150.
+  + Full cover for in-patient hospital delivery | Full cover for participating consultants
+  - Copayment of €150
+  https://levelhealth.ie/api/download?path=o%2Fassets%252Fbf5aeb09845647e5a8182770c0ca0fdc%252Fd9fe12370802462a8913837d173d2821%3Falt%3Dmedia%26token%3D0958c8b2-3f54-4d83-9a1b-625d7b8979a7
+
+  Rank 5: Tailored Health Plans Membership Handbook (Irish Life Health)
+  Fit: 6/10 | Rule score: 0.5
+  This plan offers some maternity benefits, including postnatal doula support, but the coverage is not as comprehensive as some of the other plans.
+  + Postnatal doula support | Low excess of €30
+  - Limited maternity benefits
+  https://www.irishlifehealth.ie/IrishLifeHealth/media/docs/ILH-Tailored-Health-Plans-Handbook-Jan-2026.pdf
