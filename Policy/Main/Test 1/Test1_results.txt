@@ -1,0 +1,111 @@
+Loading embedding model...
+Loading weights: 100%
+ 391/391 [00:01<00:00, 392.48it/s, Materializing param=pooler.dense.weight]
+Loaded 19 plan URLs.
+Loading RAG chunks...
+Loaded 950 chunks across 19 plans.
+Loaded structured data for 19 plans.
+Building FAISS index...
+Batches: 100%
+ 30/30 [00:11<00:00,  4.05it/s]
+Building BM25 index...
+Indices ready.
+
+
+=================================================================
+Query: I'm 68 with Parkinson's. I see a neurologist monthly and take daily medication.
+Profile: age=68 | conditions=['neurological'] | freq=daily | visits=None | admissions=None
+Retrieved 10 candidates via RRF.
+Rule engine passed 10 plans to LLM.
+  Sending 7 plans to llama-3.3-70b-versatile (max_tokens=4000)...
+
+Top 5 results:
+
+  Rank 1: Inspire (Table of Benefits) (Laya Healthcare)
+  Fit: 6/10 | Rule score: 0.5
+  This plan offers some benefits that may be relevant to a person with Parkinson's, such as physiotherapy and speech and language therapy. However, the plan does not explicitly mention neurological conditions or daily medication coverage. The plan's focus on everyday health expenses and complementary therapies may be beneficial, but it may not provide comprehensive coverage for neurological care.
+  + Physiotherapy coverage | Speech and language therapy coverage
+  - No explicit mention of neurological conditions | No daily medication coverage mentioned
+  ! Gaps: Neurological conditions | Daily medication | Specialist care
+  https://www.hia.ie/sites/default/files/Inspire.pdf
+
+  Rank 2: Prime Plan Table of Benefits (Laya Healthcare)
+  Fit: 5/10 | Rule score: 0.5
+  This plan offers some benefits that may be relevant to a person with Parkinson's, such as occupational therapy and home nursing. However, the plan does not explicitly mention neurological conditions or daily medication coverage. The plan's focus on out-patient benefits may be beneficial, but it may not provide comprehensive coverage for neurological care.
+  + Occupational therapy coverage | Home nursing coverage
+  - No explicit mention of neurological conditions | No daily medication coverage mentioned
+  ! Gaps: Neurological conditions | Daily medication | Specialist care
+  https://www.hia.ie/sites/default/files/Table%20of%20Benefits%20Prime%2001.08.2019.pdf
+
+  Rank 3: PMI Plan B – Table of Benefits (Laya Healthcare)
+  Fit: 4/10 | Rule score: 0.5
+  This plan offers some benefits that may be relevant to a person with Parkinson's, such as physiotherapy and clinical psychologist coverage. However, the plan does not explicitly mention neurological conditions or daily medication coverage. The plan's focus on everyday health expenses may be beneficial, but it may not provide comprehensive coverage for neurological care.
+  + Physiotherapy coverage | Clinical psychologist coverage
+  - No explicit mention of neurological conditions | No daily medication coverage mentioned
+  ! Gaps: Neurological conditions | Daily medication | Specialist care
+  https://www.hia.ie/sites/default/files/PMI%2001%2010.pdf
+
+  Rank 4: Plan D (Table of Cover) (Level Health)
+  Fit: 4/10 | Rule score: 0.5
+  This plan offers some benefits that may be relevant to a person with Parkinson's, such as complementary therapies coverage. However, the plan does not explicitly mention neurological conditions or daily medication coverage. The plan's focus on everyday health expenses may be beneficial, but it may not provide comprehensive coverage for neurological care.
+  + Complementary therapies coverage
+  - No explicit mention of neurological conditions | No daily medication coverage mentioned
+  ! Gaps: Neurological conditions | Daily medication | Specialist care
+  https://levelhealth.ie/api/download?path=o%2Fassets%252Fbf5aeb09845647e5a8182770c0ca0fdc%252Fa738c8a3851b4113889f5e0cb00f28fc%3Falt%3Dmedia%26token%3Db7207980-b88c-4259-984b-e3eaab5bcf5a
+
+  Rank 5: Hospital Plans Rules (Terms & Conditions) (Vhi)
+  Fit: 3/10 | Rule score: 0.5
+  This plan does not provide clear information on benefits relevant to a person with Parkinson's. The plan's focus on hospital costs and waiting periods may not be beneficial for someone requiring ongoing neurological care.
+  - No explicit mention of neurological conditions | No daily medication coverage mentioned
+  ! Gaps: Neurological conditions | Daily medication | Specialist care
+  https://www.vhi.ie/pdf/products/Hospital%20Plans%20Rules_01Oct25_VHIMR2.pdf
+
+
+=================================================================
+Query: I'm pregnant. Looking for the best maternity cover with postnatal support.
+Profile: age=None | conditions=['maternity'] | freq=None | visits=None | admissions=None
+Retrieved 10 candidates via RRF.
+Rule engine passed 10 plans to LLM.
+  Sending 7 plans to llama-3.3-70b-versatile (max_tokens=4000)...
+
+Top 5 results:
+
+  Rank 1: Plan C (Table of Cover) (Level Health)
+  Fit: 9/10 | Rule score: 0.5
+  This plan offers comprehensive maternity benefits, including full cover for in-patient hospital delivery and consultant fees, as well as post-natal home support. It also provides pre-natal and post-natal care benefits. The plan's strengths in maternity cover make it a strong fit for this user's needs.
+  + Full cover for in-patient hospital delivery | Full cover for participating consultants' fees
+  - No explicit mention of postnatal doula benefit
+  ! Gaps: No explicit mention of fertility support benefits
+  https://levelhealth.ie/api/download?path=o%2Fassets%252Fbf5aeb09845647e5a8182770c0ca0fdc%252Ffc78d45331d14d3bb3203be51029e608%3Falt%3Dmedia%26token%3D0fcbd2b3-db9f-4bea-80a1-4b60069b7937
+
+  Rank 2: Plan D (Table of Cover) (Level Health)
+  Fit: 9/10 | Rule score: 0.5
+  This plan offers similar comprehensive maternity benefits to Plan C, including full cover for in-patient hospital delivery and consultant fees, as well as post-natal home support. It also provides pre-natal and post-natal care benefits, making it a strong fit for this user's needs.
+  + Full cover for in-patient hospital delivery | Full cover for participating consultants' fees
+  - No explicit mention of postnatal doula benefit
+  ! Gaps: No explicit mention of fertility support benefits
+  https://levelhealth.ie/api/download?path=o%2Fassets%252Fbf5aeb09845647e5a8182770c0ca0fdc%252Fa738c8a3851b4113889f5e0cb00f28fc%3Falt%3Dmedia%26token%3Db7207980-b88c-4259-984b-e3eaab5bcf5a
+
+  Rank 3: Plan B (with €300 Excess) (Table of Cover) (Level Health)
+  Fit: 8/10 | Rule score: 0.5
+  This plan offers comprehensive maternity benefits, including full cover for in-patient hospital delivery and consultant fees, as well as pre-natal and post-natal care benefits. However, it does not offer post-natal home support, which may be a drawback for some users.
+  + Full cover for in-patient hospital delivery | Full cover for participating consultants' fees
+  - No post-natal home support benefit | €300 excess may be a drawback for some users
+  ! Gaps: No explicit mention of fertility support benefits
+  https://levelhealth.ie/api/download?path=o%2Fassets%252Fbf5aeb09845647e5a8182770c0ca0fdc%252F466dbce0188f47308dc32f12d9db6710%3Falt%3Dmedia%26token%3D3c4e0d86-77ef-4275-b244-88bdb7d850fa
+
+  Rank 4: Plan B (with €150 Excess) (Table of Cover) (Level Health)
+  Fit: 8/10 | Rule score: 0.5
+  This plan offers comprehensive maternity benefits, including full cover for in-patient hospital delivery and consultant fees, as well as post-natal home support and pre-natal and post-natal care benefits. The lower excess compared to Plan B (with €300 Excess) may make it a more attractive option for some users.
+  + Full cover for in-patient hospital delivery | Full cover for participating consultants' fees
+  - No explicit mention of postnatal doula benefit
+  ! Gaps: No explicit mention of fertility support benefits
+  https://levelhealth.ie/api/download?path=o%2Fassets%252Fbf5aeb09845647e5a8182770c0ca0fdc%252Fd9fe12370802462a8913837d173d2821%3Falt%3Dmedia%26token%3D0958c8b2-3f54-4d83-9a1b-625d7b8979a7
+
+  Rank 5: Tailored Health Plans Membership Handbook (Irish Life Health)
+  Fit: 6/10 | Rule score: 0.5
+  This plan offers a postnatal doula benefit, which may be attractive to some users. However, the plan's maternity benefits are not as comprehensive as those offered by other plans, and the lack of explicit information about pre-natal and post-natal care benefits may be a drawback.
+  + Postnatal doula benefit
+  - Limited information about maternity benefits | No explicit mention of pre-natal and post-natal care benefits
+  ! Gaps: No explicit mention of fertility support benefits
+  https://www.irishlifehealth.ie/IrishLifeHealth/media/docs/ILH-Tailored-Health-Plans-Handbook-Jan-2026.pdf
