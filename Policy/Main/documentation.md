@@ -1,4 +1,4 @@
-# Irish Health Insurance — Smart RAG Engine
+# Hybrid Risk-Aware Health Insurance Recommendation System
 
 A hybrid retrieval and ranking system for matching Irish health insurance plans to individual user needs. Combines semantic search, lexical search, a deterministic rule engine, and an LLM reranker into a single pipeline that produces ranked plan recommendations with plain-English explanations.
 
