@@ -6,3 +6,4 @@
     base_url = "https://api.groq.com/openai/v1",
 )
 ```
+Refer to [Documentation](documentation.md) for more details
