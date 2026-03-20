@@ -77,15 +77,9 @@ pip install -r requirements.txt
 ```
 
 ### Set your Groq API Key
-Create a `.env` file in the project root:
-```
-GROQ_API_KEY=gsk_your_key_here
-```
-
 Add to `Test2_Final.py`:
-```python
-from dotenv import load_dotenv
-load_dotenv()
+
+GROQ_API_KEY=gsk_your_key_here
 ```
 
 ### Run
