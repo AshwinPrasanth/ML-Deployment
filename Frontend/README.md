@@ -77,6 +77,7 @@ pip install -r requirements.txt
 ```
 
 ### Set your Groq API Key
+```
 Add to `Test2_Final.py`:
 
 GROQ_API_KEY=gsk_your_key_here
