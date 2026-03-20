@@ -1,4 +1,4 @@
-# 🏥 Irish Health Insurance Advisor — Frontend
+# 🏥 Irish Health Insurance Recommender — Frontend
 
 A Streamlit-based web application that recommends the best Irish health insurance plans for a user based on their health profile, using a two-layer AI pipeline (Rule Engine + LLM Reranker) with hybrid semantic search and PDF evidence highlighting.
 
@@ -8,7 +8,7 @@ A Streamlit-based web application that recommends the best Irish health insuranc
 
 ```
 Frontend/
-├── streamlit_app.py        # Main Streamlit application
+├── streamlit_app_final.py        # Main Streamlit application
 ├── pdf_highlighter.py      # PDF evidence highlighting using PyMuPDF
 ├── requirements.txt        # Python dependencies
 └── README.md               # This file
@@ -95,22 +95,6 @@ streamlit run streamlit_app.py
 
 App opens at `http://localhost:8501`
 
----
-
-## 🌍 Deploying to Streamlit Cloud (Free)
-
-1. Push repo to GitHub
-2. Go to [share.streamlit.io](https://share.streamlit.io)
-3. Connect GitHub → select repo → set main file as `streamlit_app.py`
-4. Add secret in **Advanced Settings**:
-```toml
-GROQ_API_KEY = "gsk_your_key_here"
-```
-5. Click **Deploy**
-
-> **Tip:** Pre-build and commit `faiss_multi_provider_index.bin` locally before deploying to avoid the 6-minute FAISS encoding on every cold start.
-
----
 
 ## 📦 Requirements
 
@@ -199,17 +183,3 @@ The profile extractor automatically detects these conditions from your query tex
 
 "I'm 25 and healthy. Want the most affordable basic cover."
 ```
-
----
-
-## 🔄 Updating the App
-
-After any code change:
-
-```bash
-git add .
-git commit -m "describe your change"
-git push
-```
-
-Streamlit Cloud auto-redeploys on every push.
