@@ -371,3 +371,13 @@ faiss_multi_provider_index.bin       ← FAISS index (auto-generated on first ru
 | `6` | `llm_rerank()` — LLM scoring with JSON repair |
 | `7` | `smart_search()` — full pipeline orchestrator |
 | `8` | Demo queries |
+
+## License
+
+This project is licensed under the Apache License 2.0.
+
+See the [LICENSE](./LICENSE) file for full details.
+
+Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+
+© 2026 Ashwin Prasanth, Konstantinos Sklavenitis, Kiran, Charalampos Theodoridis
