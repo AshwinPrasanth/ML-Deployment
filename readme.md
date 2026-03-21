@@ -2,6 +2,9 @@
 
 A hybrid retrieval and ranking system for matching Irish health insurance plans to individual user needs. Combines semantic search, lexical search, a deterministic rule engine, and an LLM reranker into a single pipeline that produces ranked plan recommendations with plain-English explanations.
 
+[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](./LICENSE)
+
+This project is licensed under the Apache License 2.0.
 ---
 
 ## What it does
