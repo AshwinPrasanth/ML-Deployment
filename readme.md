@@ -401,7 +401,8 @@ AVERAGE METRICS ACROSS QUERIES
   Avg TPOT:              0.002133 s/token
   Avg throughput:        468.7671 tok/s
   Avg output tokens:     939.00
-  Avg total query time:  2.4062 s
+  Avg total query time:  2.4062 
+```
 
 ## License
 
