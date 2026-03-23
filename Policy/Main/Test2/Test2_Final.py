@@ -58,7 +58,7 @@ if _PROJECT_ROOT not in sys.path:
 # export GROQ_API_KEY="gsk_..."
 
 LLM_CLIENT = OpenAI(
-    api_key  = os.environ.get("GROQ_API_KEY", "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"),
+    api_key  = os.environ.get("GROQ_API_KEY", "key"),
     base_url = "https://api.groq.com/openai/v1",
 )
 LLM_MODEL = "llama-3.3-70b-versatile"   # llama-3.1-70b-versatile was decommissioned Dec 2024
