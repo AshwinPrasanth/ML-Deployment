@@ -37,6 +37,7 @@ Why both?
 
 import json, re, os
 import numpy as np
+import time
 import faiss
 from sentence_transformers import SentenceTransformer
 from rank_bm25 import BM25Okapi
@@ -57,7 +58,7 @@ if _PROJECT_ROOT not in sys.path:
 # export GROQ_API_KEY="gsk_..."
 
 LLM_CLIENT = OpenAI(
-    api_key  = os.environ.get("GROQ_API_KEY", "<enter your key>"),
+    api_key  = os.environ.get("GROQ_API_KEY", "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"),
     base_url = "https://api.groq.com/openai/v1",
 )
 LLM_MODEL = "llama-3.3-70b-versatile"   # llama-3.1-70b-versatile was decommissioned Dec 2024
@@ -68,9 +69,8 @@ LLM_MODEL = "llama-3.3-70b-versatile"   # llama-3.1-70b-versatile was decommissi
 
 RAG_CHUNKS_PATH   = "Policy/Main/Test_Docs/rag_chunks.jsonl"
 SUPERSET_PATH     = "Policy/Main/Test_Docs/MASTER_STRUCTURED_SUPERSET_2026-1.jsonl"
-URL_METADATA_PATH = "Policy/Main/Test_Docs/metadata.json"
+URL_METADATA_PATH = "Policy/Main/Test_Docs/metadata (1).json"
 INDEX_PATH        = "Policy/Main/Test_Docs/faiss_multi_provider_index.bin"
-
 
 # =============================================================================
 # SECTION 1 — USER PROFILE EXTRACTOR
@@ -472,18 +472,19 @@ A JSON array, sorted best-fit first, each element:
   "coverage_gaps": ["<conditions mentioned that plan seems silent or weak on>"]
 }"""
 
-
-def llm_rerank(candidates: list, profile: dict) -> list:
+def llm_rerank(candidates: list, profile: dict) -> tuple[list, dict]:
     lines = [f"User query: {profile['raw_query']}"]
-    if profile["age"]:              lines.append(f"Age: {profile['age']}")
-    if profile["conditions"]:       lines.append(f"Health conditions: {', '.join(profile['conditions'])}")
-    if profile["medication_freq"]:  lines.append(f"Medication frequency: {profile['medication_freq']}")
+    if profile["age"]:
+        lines.append(f"Age: {profile['age']}")
+    if profile["conditions"]:
+        lines.append(f"Health conditions: {', '.join(profile['conditions'])}")
+    if profile["medication_freq"]:
+        lines.append(f"Medication frequency: {profile['medication_freq']}")
     if profile["specialist_visits"] is not None:
         lines.append(f"Specialist visits/year: {profile['specialist_visits']}")
     if profile["hospital_admissions"] is not None:
         lines.append(f"Hospital admissions (last 2 yrs): {profile['hospital_admissions']}")
 
-    # Cap at 7 to keep prompt within token limits — rule engine already filtered worst plans
     candidates_for_llm = candidates[:7]
     plan_blocks = []
     for i, c in enumerate(candidates_for_llm, 1):
@@ -500,25 +501,57 @@ def llm_rerank(candidates: list, profile: dict) -> list:
         "\n\n".join(plan_blocks)
     )
 
-    print(f"  Sending {len(candidates_for_llm)} plans to {LLM_MODEL} (max_tokens=4000)...")
-    response = LLM_CLIENT.chat.completions.create(
-        model=LLM_MODEL, max_tokens=4000, temperature=0.1,
+    print(f"  Sending {len(candidates_for_llm)} plans to {LLM_MODEL} (stream=True)...")
+
+    llm_start = time.perf_counter()
+    first_token_time = None
+    raw_parts = []
+    output_token_count = 0
+
+    stream = LLM_CLIENT.chat.completions.create(
+        model=LLM_MODEL,
+        max_tokens=4000,
+        temperature=0.1,
+        stream=True,
         messages=[
             {"role": "system", "content": RERANKER_SYSTEM},
-            {"role": "user",   "content": user_message},
+            {"role": "user", "content": user_message},
         ],
     )
-    raw = response.choices[0].message.content.strip()
 
-    # --- JSON repair: handle truncated responses ---
+    for chunk in stream:
+        delta = chunk.choices[0].delta.content if chunk.choices and chunk.choices[0].delta else None
+        if delta:
+            now = time.perf_counter()
+            if first_token_time is None:
+                first_token_time = now
+            raw_parts.append(delta)
+            output_token_count += len(delta.split())
+
+    llm_end = time.perf_counter()
+    raw = "".join(raw_parts).strip()
+
+    total_llm_latency = llm_end - llm_start
+    ttft = (first_token_time - llm_start) if first_token_time else None
+    generation_time = (llm_end - first_token_time) if first_token_time else None
+    tpot = (generation_time / output_token_count) if generation_time and output_token_count > 0 else None
+
+    llm_metrics = {
+        "llm_total_latency_sec": round(total_llm_latency, 4),
+        "ttft_sec": round(ttft, 4) if ttft is not None else None,
+        "tpot_sec": round(tpot, 6) if tpot is not None else None,
+        "output_token_count_est": output_token_count,
+        "throughput_tok_per_sec": round(output_token_count / generation_time, 4)
+        if generation_time and output_token_count > 0 else None,
+    }
+
     def repair_json(text):
-        # Strip markdown fences
         text = re.sub(r"```(?:json)?|```", "", text).strip()
         try:
             return json.loads(text)
         except json.JSONDecodeError:
             pass
-        # Truncated mid-array: find last complete object and close the array
+
         last_complete = text.rfind('},')
         if last_complete == -1:
             last_complete = text.rfind('}')
@@ -528,56 +561,52 @@ def llm_rerank(candidates: list, profile: dict) -> list:
                 return json.loads(text)
             except json.JSONDecodeError:
                 pass
-        # Last resort: extract whatever complete objects exist
+
         objects = re.findall(r'\{[^{}]*"plan_name"[^{}]*"fit_score"[^{}]*\}', text, re.DOTALL)
         if objects:
             return json.loads('[' + ','.join(objects) + ']')
+
         raise ValueError(f"Could not parse LLM response: {text[:200]}")
 
     llm_results = repair_json(raw)
 
-    # Fuzzy match: LLM often shortens plan names — match by substring both ways
     def fuzzy_match(candidate_name, results):
         cn = candidate_name.lower()
-        for r in results:                                    # exact
-            if r["plan_name"].lower() == cn: return r
-        for r in results:                                    # substring
+        for r in results:
+            if r["plan_name"].lower() == cn:
+                return r
+        for r in results:
             ln = r["plan_name"].lower()
-            if ln in cn or cn in ln: return r
-        for r in results:                                    # word overlap >50%
+            if ln in cn or cn in ln:
+                return r
+        for r in results:
             words = [w for w in r["plan_name"].lower().split() if len(w) > 3]
             if words and sum(1 for w in words if w in cn) / len(words) >= 0.5:
                 return r
         return {}
 
     enriched = []
-    for c in candidates_for_llm:   # only match plans that were actually sent to LLM
+    for c in candidates_for_llm:
         llm = fuzzy_match(c["plan_name"], llm_results)
         enriched.append({
             **c,
-            "fit_score":     llm.get("fit_score", 0),
-            "fit_summary":   llm.get("fit_summary", "Not evaluated."),
-            "strengths":     llm.get("strengths", []),
-            "weaknesses":    llm.get("weaknesses", []),
+            "fit_score": llm.get("fit_score", 0),
+            "fit_summary": llm.get("fit_summary", "Not evaluated."),
+            "strengths": llm.get("strengths", []),
+            "weaknesses": llm.get("weaknesses", []),
             "coverage_gaps": llm.get("coverage_gaps", []),
         })
 
     enriched.sort(key=lambda x: x["fit_score"], reverse=True)
-    return enriched
-
+    return enriched, llm_metrics
 
 # =============================================================================
 # SECTION 7 — FULL PIPELINE
 # =============================================================================
 
-def smart_search(query: str, top_n: int = 5) -> list:
-    """
-    1. Extract user profile
-    2. RRF retrieval → up to 10 candidates
-    3. Rule engine → hard-reject ineligible plans, score survivors
-    4. LLM reranker → intelligent fit scoring on survivors only
-    5. Return top_n with full explanation
-    """
+def smart_search(query: str, top_n: int = 5) -> tuple[list, dict]:
+    query_start = time.perf_counter()
+
     print(f"\n{'='*65}")
     print(f"Query: {query}")
 
@@ -586,13 +615,18 @@ def smart_search(query: str, top_n: int = 5) -> list:
           f"freq={profile['medication_freq']} | visits={profile['specialist_visits']} | "
           f"admissions={profile['hospital_admissions']}")
 
-    # Step 1: retrieve
+    # Step 1: retrieval
+    retrieval_start = time.perf_counter()
     candidates = retrieve_candidates(query, top_n=10)
+    retrieval_end = time.perf_counter()
+    retrieval_time = retrieval_end - retrieval_start
     print(f"Retrieved {len(candidates)} candidates via RRF.")
 
-    # Step 2: rule engine filters + scores each candidate
+    # Step 2: rule engine
+    rule_start = time.perf_counter()
     survivors = []
-    rejected  = []
+    rejected = []
+
     for c in candidates:
         rule_score, passes, notes = rule_engine(c["internal_key"], profile)
         if passes:
@@ -602,6 +636,9 @@ def smart_search(query: str, top_n: int = 5) -> list:
         else:
             rejected.append((c["plan_name"], notes[0] if notes else "rejected"))
 
+    rule_end = time.perf_counter()
+    rule_time = rule_end - rule_start
+
     if rejected:
         print(f"Rule engine rejected {len(rejected)} plans:")
         for name, reason in rejected:
@@ -610,18 +647,46 @@ def smart_search(query: str, top_n: int = 5) -> list:
     print(f"Rule engine passed {len(survivors)} plans to LLM.")
 
     if not survivors:
-        print("No plans passed the rule engine for this query.")
-        return []
+        total_time = time.perf_counter() - query_start
+        metrics = {
+            "retrieval_time_sec": round(retrieval_time, 4),
+            "rule_engine_time_sec": round(rule_time, 4),
+            "llm_total_latency_sec": None,
+            "ttft_sec": None,
+            "tpot_sec": None,
+            "output_token_count_est": 0,
+            "throughput_tok_per_sec": None,
+            "total_query_time_sec": round(total_time, 4),
+            "retrieved_candidates": len(candidates),
+            "rejected_candidates": len(rejected),
+            "survivor_candidates": len(survivors),
+        }
+        return [], metrics
 
-    # Step 3: LLM reranks survivors
-    results = llm_rerank(survivors, profile)
-    return results[:top_n]
+    # Step 3: LLM rerank
+    results, llm_metrics = llm_rerank(survivors, profile)
 
+    total_time = time.perf_counter() - query_start
+
+    metrics = {
+        "retrieval_time_sec": round(retrieval_time, 4),
+        "rule_engine_time_sec": round(rule_time, 4),
+        "llm_total_latency_sec": llm_metrics["llm_total_latency_sec"],
+        "ttft_sec": llm_metrics["ttft_sec"],
+        "tpot_sec": llm_metrics["tpot_sec"],
+        "output_token_count_est": llm_metrics["output_token_count_est"],
+        "throughput_tok_per_sec": llm_metrics["throughput_tok_per_sec"],
+        "total_query_time_sec": round(total_time, 4),
+        "retrieved_candidates": len(candidates),
+        "rejected_candidates": len(rejected),
+        "survivor_candidates": len(survivors),
+    }
+
+    return results[:top_n], metrics
 
 # =============================================================================
 # SECTION 8 — DEMO
 # =============================================================================
-
 if __name__ == "__main__":
     queries = [
         # unknown condition — LLM infers, rule engine can't help, but won't wrongly reject
@@ -637,8 +702,12 @@ if __name__ == "__main__":
         "I'm 25 and healthy. Want the most affordable basic cover.",
     ]
 
+    
+    all_metrics = []
+
     for query in queries[:2]:
-        results = smart_search(query)
+        results, metrics = smart_search(query)
+        all_metrics.append(metrics)
 
         print(f"\nTop {len(results)} results:\n")
         for i, r in enumerate(results, 1):
@@ -652,3 +721,32 @@ if __name__ == "__main__":
             if r["coverage_gaps"]:
                 print(f"  ! Gaps: {' | '.join(r['coverage_gaps'])}")
             print(f"  {r['source_url']}\n")
+
+        print("METRICS")
+        print(f"  Retrieval time:        {metrics['retrieval_time_sec']} s")
+        print(f"  LLM total latency:     {metrics['llm_total_latency_sec']} s")
+        print(f"  TTFT:                  {metrics['ttft_sec']} s")
+        print(f"  TPOT:                  {metrics['tpot_sec']} s/token")
+        print(f"  Throughput:            {metrics['throughput_tok_per_sec']} tok/s")
+        print(f"  Output tokens (est):   {metrics['output_token_count_est']}")
+        print(f"  Total query time:      {metrics['total_query_time_sec']} s")
+        print("-" * 65)
+
+    if all_metrics:
+        avg_retrieval = sum(m['retrieval_time_sec'] for m in all_metrics if m['retrieval_time_sec'] is not None) / len(all_metrics)
+        avg_llm = sum(m['llm_total_latency_sec'] for m in all_metrics if m['llm_total_latency_sec'] is not None) / len(all_metrics)
+        avg_ttft = sum(m['ttft_sec'] for m in all_metrics if m['ttft_sec'] is not None) / len(all_metrics)
+        avg_tpot = sum(m['tpot_sec'] for m in all_metrics if m['tpot_sec'] is not None) / len(all_metrics)
+        avg_throughput = sum(m['throughput_tok_per_sec'] for m in all_metrics if m['throughput_tok_per_sec'] is not None) / len(all_metrics)
+        avg_output_tokens = sum(m['output_token_count_est'] for m in all_metrics if m['output_token_count_est'] is not None) / len(all_metrics)
+        avg_total = sum(m['total_query_time_sec'] for m in all_metrics if m['total_query_time_sec'] is not None) / len(all_metrics)
+
+        print("\nAVERAGE METRICS ACROSS QUERIES")
+        print(f"  Avg retrieval time:    {avg_retrieval:.4f} s") # How fast we find candidates
+        print(f"  Avg LLM latency:       {avg_llm:.4f} s") # How long AI takes to answer
+        print(f"  Avg TTFT:              {avg_ttft:.4f} s") #How fast AI starts talking 
+        print(f"  Avg TPOT:              {avg_tpot:.6f} s/token") # Speed per word/token
+        print(f"  Avg throughput:        {avg_throughput:.4f} tok/s") #Words per second
+        print(f"  Avg output tokens:     {avg_output_tokens:.2f}") #Answer length
+        print(f"  Avg total query time:  {avg_total:.4f} s") #Full system delay
+        print("=" * 65)
