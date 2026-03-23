@@ -375,6 +375,34 @@ faiss_multi_provider_index.bin       ← FAISS index (auto-generated on first ru
 | `7` | `smart_search()` — full pipeline orchestrator |
 | `8` | Demo queries |
 
+## Evaluation Metrics
+
+The system is evaluated using latency and generation-performance metrics across multiple queries. These metrics help measure both system efficiency and user-perceived responsiveness.
+
+### Metrics explained
+
+| Metric | Description |
+|--------|-------------|
+| **Retrieval time** | Time required to fetch candidate plans using FAISS, BM25, and Reciprocal Rank Fusion (RRF). |
+| **LLM latency** | Total time taken by the LLM to generate the full response, measured from request submission to the final token. |
+| **TTFT (Time To First Token)** | Time between sending the request and receiving the first generated token. This reflects the initial processing delay before output begins. |
+| **TPOT (Time Per Output Token)** | Average time required to generate each output token. This measures token-level generation speed. |
+| **Throughput (tokens/sec)** | Number of tokens generated per second. Higher throughput indicates faster generation. |
+| **Output tokens** | Total number of tokens produced in the response. This reflects answer length and directly affects both latency and cost. |
+| **Total query time** | End-to-end system latency, including retrieval, rule-based filtering, and LLM reranking. |
+
+### Example average results across queries
+
+```text
+AVERAGE METRICS ACROSS QUERIES
+  Avg retrieval time:    0.0685 s
+  Avg LLM latency:       2.3353 s
+  Avg TTFT:              0.3290 s
+  Avg TPOT:              0.002133 s/token
+  Avg throughput:        468.7671 tok/s
+  Avg output tokens:     939.00
+  Avg total query time:  2.4062 s
+
 ## License
 
 This project is licensed under the Apache License 2.0.
