@@ -59,6 +59,9 @@ high_tech_flag       international_flag
 
 The pipeline has two sequential layers. The rule engine runs first — fast, deterministic, no API calls. The LLM only sees plans that passed the rule engine.
 
+<p align="center">
+  <img src="Docs/Media/HOPE (2).png" alt="Architecture" width="500">
+</p>
 ```
 User query (natural language)
         │
