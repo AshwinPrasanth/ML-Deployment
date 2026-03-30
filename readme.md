@@ -52,7 +52,7 @@ high_tech_flag       international_flag
 ## Workflow
 
 <p align="center">
-  <img src="Docs/Media/HOPE (1).png" alt="Figure 1. Workflow" width="500">
+  <img src="Docs/Media/workflow.png" alt="Figure 1. Workflow" width="500">
 </p>
 
 ## Architecture
@@ -60,7 +60,7 @@ high_tech_flag       international_flag
 The pipeline has two sequential layers. The rule engine runs first — fast, deterministic, no API calls. The LLM only sees plans that passed the rule engine.
 
 <p align="center">
-  <img src="Docs/Media/HOPE (2).png" alt="Architecture" width="500">
+  <img src="Docs/Media/architecture.png" alt="Architecture" width="500">
 </p>
 
 
