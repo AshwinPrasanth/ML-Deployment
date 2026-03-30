@@ -49,6 +49,11 @@ high_tech_flag       international_flag
 ```
 
 ---
+## Workflow
+
+<p align="center">
+  <img src="Docs/Media/HOPE (1).png" alt="Figure 1. Workflow" width="500">
+</p>
 
 ## Architecture
 
